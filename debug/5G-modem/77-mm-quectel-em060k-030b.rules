@@ -1,0 +1,29 @@
+# ModemManager udev port-types rules for Quectel EM060K-GL (PID 030B, MBIM composition)
+#
+# 安裝：
+#   adb push 77-mm-quectel-em060k-030b.rules /etc/udev/rules.d/
+#   adb shell 'udevadm control --reload && udevadm trigger'
+#
+# 為何需要：
+#   QLI 1.8 內建 /usr/lib/udev/rules.d/77-mm-quectel-port-types.rules 只認 PID 0128
+#   (舊韌體)，沒涵蓋 030B。MM 拿不到 port-type 提示，整顆 modem fallback 到 PPP。
+#
+# 韌體 EM060KGLAAR01A11M2G 的 USB composition (MBIM mode)：
+#   if #00 (ttyUSB0)   ff/ff/30   NMEA  / GPS data port
+#   if #01 (ttyUSB1)   ff/00/40   DM    / QCDM diag port
+#   if #02 (ttyUSB2)   ff/ff/40   AT primary
+#   if #03 (ttyUSB3)   ff/ff/40   AT secondary
+#   if #08 (cdc-wdm0)  02/0e/00   MBIM control
+#   if #09 (wwan0)     0a/00/02   MBIM data
+#   if #0c             ff/ff/70   QDSS aux (no driver)
+
+# Quectel EM060K-GL (PID 030B, MBIM)
+ACTION!="add|change|move|bind", GOTO="mm_quectel_em060k_030b_end"
+SUBSYSTEM!="tty", GOTO="mm_quectel_em060k_030b_end"
+
+ATTRS{idVendor}=="2c7c", ATTRS{idProduct}=="030b", ENV{.MM_USBIFNUM}=="00", ENV{ID_MM_PORT_TYPE_GPS}="1"
+ATTRS{idVendor}=="2c7c", ATTRS{idProduct}=="030b", ENV{.MM_USBIFNUM}=="01", ENV{ID_MM_PORT_TYPE_QCDM}="1"
+ATTRS{idVendor}=="2c7c", ATTRS{idProduct}=="030b", ENV{.MM_USBIFNUM}=="02", ENV{ID_MM_PORT_TYPE_AT_PRIMARY}="1"
+ATTRS{idVendor}=="2c7c", ATTRS{idProduct}=="030b", ENV{.MM_USBIFNUM}=="03", ENV{ID_MM_PORT_TYPE_AT_SECONDARY}="1"
+
+LABEL="mm_quectel_em060k_030b_end"
