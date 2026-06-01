@@ -1,3 +1,8 @@
 fw/fw-image/*
 dtb/dtb-bin_hacker/*
 dtb/DP-issue-QLI1.8/*
+debug/rs485/dtb/*
+dtb/dtb.bin
+dtb/tmp_dtb/*
+fw/tmp-flash-xbl/*
+fw/for_qcom/pm.dtsi
