@@ -50,9 +50,18 @@ flash_ufs_provision() {
     if [ -d "$TARGET_IMAGE_ROOT/ufs-provision-iq9" ]; then
         UFS_PATH="$TARGET_IMAGE_ROOT/ufs-provision-iq9"
     else
-        UFS_PATH="$SCRIPT_DIR/image/ufs-provision-iq9"
+        UFS_PATH="$SCRIPT_DIR/ufs-provision-iq9"
     fi
     echo "   -> Source: $UFS_PATH"
+
+    # 防呆：缺檔時直接給清楚訊息，不要丟給 qdl 變成看不懂的 XML parse error
+    for f in prog_firehose_ddr.elf provision_1_2.xml; do
+        if [ ! -f "$UFS_PATH/$f" ]; then
+            echo "Error: missing '$f' in $UFS_PATH"
+            echo "       請確認 image 包內有 ufs-provision-iq9/，或把預設檔放到 $SCRIPT_DIR/ufs-provision-iq9/"
+            exit 1
+        fi
+    done
 
     "$QDL_TOOL" --storage ufs \
         "$UFS_PATH/prog_firehose_ddr.elf" \
